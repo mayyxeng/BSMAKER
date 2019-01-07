@@ -20,9 +20,8 @@ int main(int argc, char **argv){
     std::cout << *vec[i] << " ";
   }
   std::cout << std::endl;
-  ParseFiles("../myblif");
-  std::unique_ptr<int> ui;
-  ui = std::make_unique<int>(1);
-  std::cout << *ui << std::endl;
-  
+  auto overlay = ParseFiles("../myblif");
+  overlay->print_instructions();
+
+
 }

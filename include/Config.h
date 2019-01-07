@@ -36,7 +36,7 @@ public:
    *  @param rhs right hand side of = operator to be copied to left hand side.
    *  @return reference to the newly assigned coordinates
    */
-  Coordinate_t& operator=(const Coordinate_t& rhs);
+  Coordinate_t &operator=(const Coordinate_t &rhs);
   /** @return returns x value */
   int at_x() const;
   /** @return returns y value */
@@ -59,11 +59,11 @@ private:
 
 /** config instructions */
 namespace Instructions {
-enum Opcode { _switch_, _connect_to_, _connect_from_, _set_, _null_ };
+enum Opcode { _switch_, _connect_to_, _connect_from_, _set_, _bind_, _null_ };
 class Inst_t {
 public:
   Inst_t(){};
-  ~Inst_t(){};
+
   /** @brief a function that generates human readable instruction
    *  @return returns a string representing the instruction
    */
@@ -73,7 +73,7 @@ public:
    */
   virtual Opcode getOpcode() = 0;
 
-  virtual Coordinate_t getCoordinates() { return Coordinate_t(0, 0);};
+  virtual Coordinate_t getCoordinates() { return Coordinate_t(0, 0); };
 
 private:
 };
@@ -119,7 +119,6 @@ private:
    */
   Coordinate_t getSBPosition(Coordinate_t pos1, Coordinate_t pos2);
 
-
   std::string LocToStr(TLoc loc);
 };
 
@@ -141,13 +140,47 @@ public:
    */
   Coordinate_t getCoordinates() override;
   /** @return 1 if its an input to CU else 0*/
-  bool is_input() { return connection_op.in_connection;}
+  bool is_input() { return connection_op.in_connection; }
+
 private:
   Switch::Operand switch_op;
   Operand connection_op;
   Coordinate_t connection_coord;
   Coordinate_t switch_coord;
   Opcode opcode;
+};
+
+class Bind : public Inst_t {
+public:
+  struct Operand {
+    int index;
+    std::string name;
+  };
+
+  /** @brief construct the bind instruction
+   *  @param component name of the bound component
+   *  @param pin_name name of the bound pin
+   *  @param pin_index index_number for the pin
+   *  @param pos coordinates of the CU
+   *  @param dir bind direction, 'O' for outbound and 'I' for inbound
+   */
+  Bind(std::string component_name, std::string pin_name, int pin_index,
+       Coordinate_t pos, char dir);
+
+  /** @return Opcode of the instruction */
+  Opcode getOpcode() override { return _bind_; }
+
+  /** @return coordinates of the corresponding CU */
+  Coordinate_t getCoordinates() override { return coord; }
+
+  /** @return string representation of the instruction */
+  std::string getStr() override;
+
+private:
+  Bind::Operand component;
+  Bind::Operand pin;
+  Coordinate_t coord;
+  bool outbound;
 };
 
 } // namespace Instructions
@@ -159,6 +192,7 @@ public:
   Config_t(){};
   void push_back(std::unique_ptr<Instructions::Inst_t> inst);
   void print_instructions();
+
 private:
   // Device specific bit-stream
   unsigned int bit_stream;

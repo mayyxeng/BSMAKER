@@ -34,6 +34,8 @@ public:
    */
   void push_back(std::unique_ptr<Instructions::Inst_t> inst);
 
+  void print_instructions();
+
 private:
   std::unique_ptr<ConnectionBox> CBIn;
   std::unique_ptr<ConnectionBox> CBOut;
@@ -56,6 +58,7 @@ public:
    */
   void push_back(std::unique_ptr<Instructions::Inst_t> inst);
 
+  void print_instructions();
 private:
   std::vector<Block> blocks;
   int rows;

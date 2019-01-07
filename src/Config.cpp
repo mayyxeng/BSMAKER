@@ -4,8 +4,8 @@
  */
 
 #include "Config.h"
-#include <sstream>
 #include <iostream>
+#include <sstream>
 Instructions::Switch::Switch(char in_alignment, int in_track,
                              Coordinate_t in_coord, char out_alignment,
                              int out_track, Coordinate_t out_coord) {
@@ -63,7 +63,7 @@ Instructions::Switch::Switch(char in_alignment, int in_track,
   op1.number = in_track;
   op2.number = out_track;
 }
-Coordinate_t Instructions::Switch::getCoordinates() { return coord;}
+Coordinate_t Instructions::Switch::getCoordinates() { return coord; }
 Coordinate_t Instructions::Switch::getSBPosition(Coordinate_t pos1,
                                                  Coordinate_t pos2) {
   // SB position is (min(pos1.x, pos2.x), min(pos1.y, pos2.y))
@@ -109,15 +109,20 @@ Instructions::Connect::Connect(char pin_dir, std::string pin_name, int pin_idx,
   switch_op.number = track_num;
   connection_coord = pin_pos;
   switch_coord = track_pos;
-
 }
 
-Coordinate_t Instructions::Connect::getCoordinates() { return switch_coord;}
+Coordinate_t Instructions::Connect::getCoordinates() {
+  if (connection_op.in_connection)
+    return switch_coord;
+  else
+    return connection_coord;
+}
 
 std::string Instructions::Connect::getStr() {
   std::string inst("connect");
-  std::string pin = (connection_op.in_connection) ? "in@" : "out@";
-  pin += connection_op.name + "@" + std::to_string(connection_op.number);
+  // std::string pin = (connection_op.in_connection) ? "in@" : "out@";
+  std::string pin = "";
+  pin += connection_op.name + "[" + std::to_string(connection_op.number) + "]";
   std::string track = "track@" + std::to_string(switch_op.number);
   if (connection_op.in_connection) {
     return inst + " " + track + " " + pin + " #" + switch_coord.tupleStr() +
@@ -126,6 +131,26 @@ std::string Instructions::Connect::getStr() {
     return inst + " " + pin + " " + track + " #" + connection_coord.tupleStr() +
            " -> " + switch_coord.tupleStr();
   }
+}
+
+Instructions::Bind::Bind(std::string component_name, std::string pin_name,
+                         int pin_index, Coordinate_t coord, char dir) {
+  component.name = component_name;
+  component.index = 0;
+  pin.name = pin_name;
+  pin.index = pin_index;
+  this->coord = coord;
+  outbound = (dir == 'O') ? true : false;
+}
+
+std::string Instructions::Bind::getStr() {
+  std::string inst("bind");
+  std::string pin_str = pin.name + "[" + std::to_string(pin.index) + "]";
+  if (outbound)
+    inst += " " + component.name + " " + pin_str + " #" + coord.tupleStr();
+  else
+    inst += " " + pin_str + " " + component.name + " #" + coord.tupleStr();
+  return inst;
 }
 
 Coordinate_t::Coordinate_t(int _x, int _y) {
@@ -163,14 +188,12 @@ std::string Coordinate_t::tupleStr() {
   return std::string("(" + std::to_string(x) + "," + std::to_string(y) + ")");
 }
 
-void
-Config_t::push_back(std::unique_ptr<Instructions::Inst_t> inst) {
+void Config_t::push_back(std::unique_ptr<Instructions::Inst_t> inst) {
   instructions.push_back(std::move(inst));
 }
 
-void
-Config_t::print_instructions(){
-  for(auto iter = instructions.begin(); iter != instructions.end(); iter ++){
+void Config_t::print_instructions() {
+  for (auto iter = instructions.begin(); iter != instructions.end(); iter++) {
     std::cout << (*iter)->getStr() << std::endl;
   }
 }
