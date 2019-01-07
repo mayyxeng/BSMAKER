@@ -80,7 +80,7 @@ Overlay *ParseFiles(const char *circuit_name) {
         Instructions::Switch new_switch_inst(
             prev_match.str(2).c_str()[0], atoi(prev_match.str(5).c_str()), pos1,
             match.str(2).c_str()[0], atoi(match.str(5).c_str()), pos2);
-        DPRINTF("%s\n", new_switch_inst.getStr().c_str());
+        // DPRINTF("%s\n", new_switch_inst.getStr().c_str());
         overlay->push_back(
             std::make_unique<Instructions::Switch>(new_switch_inst));
 
@@ -96,7 +96,9 @@ Overlay *ParseFiles(const char *circuit_name) {
         Instructions::Connect new_connect_inst(
             'O', prev_match.str(6), atoi(prev_match.str(7).c_str()), pin_pos,
             'X', atoi(match.str(5).c_str()), track_pos);
-        DPRINTF("%s\n", new_connect_inst.getStr().c_str());
+        // DPRINTF("%s\n", new_connect_inst.getStr().c_str());
+        overlay->push_back(
+          std::make_unique<Instructions::Connect>(new_connect_inst));
       }
     } else if (regex_search(line, match, re_node_block_out) &&
                match.size() > 1) {
@@ -118,7 +120,7 @@ Overlay *ParseFiles(const char *circuit_name) {
         Instructions::Connect new_connect_inst(
             'I', match.str(6), atoi(match.str(7).c_str()), pin_pos, 'Y',
             atoi(prev_match.str(5).c_str()), track_pos);
-        DPRINTF("%s\n", new_connect_inst.getStr().c_str());
+        // DPRINTF("%s\n", new_connect_inst.getStr().c_str());
         overlay->push_back(
             std::make_unique<Instructions::Connect>(new_connect_inst));
       }

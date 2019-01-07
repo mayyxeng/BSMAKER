@@ -21,4 +21,8 @@ int main(int argc, char **argv){
   }
   std::cout << std::endl;
   ParseFiles("../myblif");
+  std::unique_ptr<int> ui;
+  ui = std::make_unique<int>(1);
+  std::cout << *ui << std::endl;
+  
 }

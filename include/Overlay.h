@@ -7,8 +7,8 @@
  *
  *  @author  Mahyar Emami(mayyxeng)
  */
-#ifndef __OVERALY_H__
-#define __OVERALY_H__
+#ifndef __OVERLAY_H__
+#define __OVERLAY_H__
 
 #include "Units.h"
 #include <vector>
@@ -35,10 +35,10 @@ public:
   void push_back(std::unique_ptr<Instructions::Inst_t> inst);
 
 private:
-  ConnectionBox CBIn;
-  ConnectionBox CBOut;
-  SwitchBox SB;
-  ComputeUnit CU;
+  std::unique_ptr<ConnectionBox> CBIn;
+  std::unique_ptr<ConnectionBox> CBOut;
+  std::unique_ptr<SwitchBox> SB;
+  std::unique_ptr<ComputeUnit> CU;
   Coordinate_t coord;
 };
 
@@ -62,4 +62,4 @@ private:
   int cols;
 };
 
-#endif // __OVERALY_H__
+#endif // __OVERLAY_H__

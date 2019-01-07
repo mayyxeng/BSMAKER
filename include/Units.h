@@ -20,16 +20,17 @@ class Block; // forward declaration
 class AbstractUnit {
 
 public:
-  AbstractUnit(){};
+  AbstractUnit(){local_coord = Coordinate_t(0, 0);};
+  AbstractUnit(Coordinate_t coord):local_coord(coord){};
   /** @brief append a config instruction
    *  @param inst new instruction to append
    */
   void push_back(std::unique_ptr<Instructions::Inst_t> inst);
   
   void print_instructions();
-private:
+protected:
   Config_t config;
-	Coordinate_t local_coord;
+  Coordinate_t local_coord;
 
 };
 
@@ -61,9 +62,10 @@ private:
  */
 
 class ConnectionBox: public AbstractUnit {
-	public:
-		ConnectionBox(){};
-	private:
+public:
+  ConnectionBox(){};
+  ConnectionBox(Coordinate_t coord) { local_coord = coord; };
+private:
 };
 
 
@@ -84,6 +86,7 @@ class ConnectionBox: public AbstractUnit {
 class SwitchBox: public AbstractUnit {
 public:
   SwitchBox(){};
+  SwitchBox(Coordinate_t coord) { local_coord = coord; };
 private:
 
 };
@@ -92,6 +95,7 @@ private:
 class ComputeUnit: public AbstractUnit {
 public:
   ComputeUnit(){};
+  ComputeUnit(Coordinate_t coord) { local_coord = coord; };
 private:
 
 };

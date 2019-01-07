@@ -1,2 +1,9 @@
 _build/*
 *.blif
+*.route
+*.dot
+*.place
+*.swap
+src/*.swap
+include/*.swap
+*.png
