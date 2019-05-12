@@ -1,2 +1,3 @@
-# BLIFMaker
-A dot to BLIF converter
+# Bit-stream generation from VPR
+
+This project was abandoned...
